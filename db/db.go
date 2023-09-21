@@ -1,15 +1,27 @@
 package db
 
-import(
+import (
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/suyogkokaje/Go_Blog_API/models"
 )
 
-var Articles []models.Article
+var (
+    DB *gorm.DB
+)
 
-func InitDB(){
-	Articles = []models.Article{
-		{Id: "1", Title: "Article1", Desc: "Article Description 1", Content: "Article Content 1"},
-		{Id: "2", Title: "Article2", Desc: "Article Description 2", Content: "Article Content 2"},
-	}
+func InitDB(config models.DatabaseConfig) {
+    connectionString := "host=" + config.Host +
+        " port=" + config.Port +
+        " user=" + config.User +
+        " dbname=" + config.DBName +
+        " password=" + config.Password +
+        " sslmode=" + config.SSLMode
+
+    var err error
+    DB, err = gorm.Open("postgres", connectionString)
+    if err != nil {
+        panic("Failed to connect to database")
+    }
+    DB.AutoMigrate(&models.Article{})
 }
-

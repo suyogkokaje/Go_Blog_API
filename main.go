@@ -3,10 +3,20 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/suyogkokaje/Go_Blog_API/db"
 	"github.com/suyogkokaje/Go_Blog_API/controllers"
+	"github.com/suyogkokaje/Go_Blog_API/models"
 )
+
+func loadEnvVariables() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
 
 func handleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
@@ -21,6 +31,19 @@ func handleRequests() {
 }
 
 func main() {
-	db.InitDB()
+	loadEnvVariables()
+
+	config := models.DatabaseConfig{
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		User:     os.Getenv("DB_USER"),
+		DBName:   os.Getenv("DB_NAME"),
+		Password: os.Getenv("DB_PASSWORD"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
+	}
+
+
+    db.InitDB(config)
+    defer db.DB.Close()
 	handleRequests()
 }
