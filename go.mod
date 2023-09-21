@@ -1,4 +1,4 @@
-module github.com/suyogkokaje/go_crud
+module github.com/suyogkokaje/Go_Blog_API
 
 go 1.21.1
 
